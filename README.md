@@ -2,12 +2,15 @@ tar-multibackup
 ===============
 
 
+FORK FROM frdmn/tar-multibackup
+https://github.com/frdmn/tar-multibackup 
+
 Bash script to backup multiple folders and to clean up old backups based on a retention time. Features configurable post/pre-commands, tar excludes as well as backup retentions.
 
 ### Installation
 
     cd /usr/local/src
-    git clone https://github.com/frdmn/tar-multibackup.git
+    git clone https://github.com/swayoleg/tar-multibackup.git
     ln -sf /usr/local/src/tar-multibackup/multibackup /usr/local/bin/multibackup
     cp /usr/local/src/tar-multibackup/multibackup.conf ~/.multibackup.conf
 
@@ -19,6 +22,8 @@ Bash script to backup multiple folders and to clean up old backups based on a re
 * `backup_retention` = Retention time how long we should keep the backups
 * `pre_commands` = Array of commands that are executed before the backup starts (stop specific service)
 * `post_commands` = Array of commands that are executed after the backup finished (start specific service)
+* `use_destination_as_root_folder` = 0 or 1. Default 0; Use 1 if you don' want to create sub-folders for each backup source - just appear prefix in name, read example.
+
 
 ### Environment configurations
 
@@ -71,6 +76,21 @@ In the example below you can find a `multibackup` configuration file to backup a
     post_commands=(
       "service liveconfig start"
     )
+
+#### Example for use_destination_as_root_folder option
+If you set this option as 0 and you have sources like:
+
+`"/var/www"`  
+`"/var/lib/mysql"`
+  
+You get
+ ` /var/backups/var-www/$timestamp.tar.gz`  
+ ` /var/backups/var-lib-mysql/$timestamp.tar.gz`
+
+And if you set this option to 1 you get:
+ ` /var/backups/var-www-$timestamp.tar.gz`  
+ ` /var/backups/var-lib-mysql-$timestamp.tar.gz`
+
 
 #### Cronjob setup
 

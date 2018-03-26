@@ -22,7 +22,7 @@ Bash script to backup multiple folders and to clean up old backups based on a re
 * `backup_retention` = Retention time how long we should keep the backups
 * `pre_commands` = Array of commands that are executed before the backup starts (stop specific service)
 * `post_commands` = Array of commands that are executed after the backup finished (start specific service)
-* `use_destination_as_root_folder` = 0 or 1. Default 0; Use 1 if you don' want to create sub-folders for each backup source - just appear prefix in name, read example.
+* `use_destination_as_root_folder` = 0 or 1. Default 0; Use 1 if you don' want to create sub-folders for each backup source - just appear postfix in name, read example.
 
 
 ### Environment configurations
@@ -88,8 +88,8 @@ You get
  ` /var/backups/var-lib-mysql/$timestamp.tar.gz`
 
 And if you set this option to 1 you get:
- ` /var/backups/var-www-$timestamp.tar.gz`  
- ` /var/backups/var-lib-mysql-$timestamp.tar.gz`
+ ` /var/backups/$timestamp-var-www.tar.gz`  
+ ` /var/backups/$timestamp-var-lib-mysql.tar.gz`
 
 
 #### Cronjob setup

@@ -121,23 +121,35 @@ for folder_to_backup in "${folders_to_backup[@]}"; do
     info "Source folder \"${folder_to_backup}\" exists!"
     # Make sure backup destination exists
     backup_basename=$(replace_slash_with_dash "${folder_to_backup}")
-    absolute_backup_destination=$(strip_duplicate_slashes_in_path "${backup_destination}/${backup_basename}")
+
+    if [[ "$use_destination_as_root_folder" -eq "1" ]]; then
+        absolute_backup_destination=$(strip_duplicate_slashes_in_path "${backup_destination}")
+    else
+        absolute_backup_destination=$(strip_duplicate_slashes_in_path "${backup_destination}/${backup_basename}")
+    fi
+
     if [[ ! -d "${absolute_backup_destination}" ]]; then
       info "Backup destination folder \"${absolute_backup_destination}\" doesn't exist. Creating..."
       mkdir -p "${absolute_backup_destination}"
     fi
 
+    if [[ "$use_destination_as_root_folder" -eq "1" ]]; then
+        final_filename=$(strip_duplicate_slashes_in_path "${absolute_backup_destination}/${backup_basename}-${timestamp}.tar.gz")
+    else
+        final_filename=$(strip_duplicate_slashes_in_path "${absolute_backup_destination}/${timestamp}.tar.gz")
+    fi
+
     # Check if backup already exists (to make sure)
-    if [[ -f "${absolute_backup_destination}/${timestamp}.tar.gz" ]]; then
-      error "Backup \"${absolute_backup_destination}/${timestamp}.tar.gz\" already exists. Skipping..."
+    if [[ -f "${final_filename}" ]]; then
+      error "Backup \"${final_filename}\" already exists. Skipping..."
     else
       # Start backup
-      info "Starting backup \"${absolute_backup_destination}/${timestamp}.tar.gz\""
-      tar czf "${absolute_backup_destination}/${timestamp}.tar.gz" -P "${folder_to_backup}" "${tar_exclude_parameters[@]}"
+      info "Starting backup \"${final_filename}\""
+      tar czf "${final_filename}" -P "${folder_to_backup}" "${tar_exclude_parameters[@]}"
       if [[ $? -eq 0 ]]; then
-        success "Backup \"${absolute_backup_destination}/${timestamp}.tar.gz\" successfully completed!"
+        success "Backup \"${final_filename}\" successfully completed!"
       else
-        error "Backup \"${absolute_backup_destination}/${timestamp}.tar.gz\" failed..."
+        error "Backup \"${final_filename}\" failed..."
       fi
     fi
 
